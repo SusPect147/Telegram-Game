@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin Collector</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .coin-button {
+            padding: 20px 40px;
+            font-size: 24px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .coin-button:hover {
+            background-color: #0056b3;
+        }
+        .counter {
+            margin-top: 20px;
+            font-size: 32px;
+        }
+    </style>
+</head>
+<body>
+    <button class="coin-button" id="coinButton">Click me for coins!</button>
+    <div class="counter" id="counter">Coins: 0</div>
+
+    <script>
+        const coinButton = document.getElementById('coinButton');
+        const counter = document.getElementById('counter');
+        let coins = 0;
+
+        // Get Telegram user ID
+        Telegram.WebApp.ready();
+        const tg = Telegram.WebApp;
+        const userId = tg.initDataUnsafe.user?.id || null;
+
+        if (!userId) {
+            alert('User ID not found. Please open in Telegram.');
+        }
+
+        coinButton.addEventListener('click', () => {
+            coins++;
+            counter.innerText = `Coins: ${coins}`;
+            // Send updated data to the server
+            fetch('https://your-backend-url.com/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    coins: coins
+                })
+            }).then(res => res.json())
+              .then(data => console.log(data))
+              .catch(err => console.error('Error:', err));
+        });
+    </script>
+</body>
+</html>
